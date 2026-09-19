@@ -6,13 +6,22 @@ spring:
     active: dev
   main:
     allow-circular-references: true
+
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
   datasource:
     druid:
       driver-class-name: ${sky.datasource.driver-class-name}
       url: jdbc:mysql://${sky.datasource.host}:${sky.datasource.port}/${sky.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: ${sky.datasource.username}
       password: ${sky.datasource.password}
-
+  redis:
+    host: ${sky.redis.host}
+    port: ${sky.redis.port}
+    database: ${sky.redis.database}
 mybatis:
   #mapper配置文件
   mapper-locations: classpath:mapper/*.xml
@@ -37,3 +46,17 @@ sky:
     admin-ttl: 7200000
     # 设置前端传递过来的令牌名称
     admin-token-name: token
+    user-secret-key: itheima
+    user-ttl: 7200000
+    user-token-name: authentication
+
+
+  alioss:
+    endpoint: oss-cn-hangzhou.aliyuncs.com
+    access-key-id: LTAI5t6CDShGvToDQNw8k8Ai  # 注意这里是你的真实值
+    access-key-secret: 5NW1V7qETsm9nCP2Wm2o2yx1uKmkib # 注意这里是你的真实值
+    bucket-name: dilicious-sky-out
+
+  wechat:
+    appid: ${sky.wechat.appid}
+    secret: ${sky.wechat.secret}
