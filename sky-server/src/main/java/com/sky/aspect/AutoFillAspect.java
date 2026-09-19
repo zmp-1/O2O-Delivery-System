@@ -1,14 +1,13 @@
 package com.sky.aspect;
 //自定义切面，实现公共字段自动填充
 
-import com.alibaba.druid.sql.ast.statement.SQLJoinTableSource;
+
 import com.sky.annotaion.AutoFill;
 import com.sky.constant.AutoFillConstant;
 import com.sky.context.BaseContext;
 import com.sky.enumeration.OperationType;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.aopalliance.intercept.Joinpoint;
+
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;

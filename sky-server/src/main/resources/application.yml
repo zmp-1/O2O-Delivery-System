@@ -6,6 +6,12 @@ spring:
     active: dev
   main:
     allow-circular-references: true
+
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
   datasource:
     druid:
       driver-class-name: ${sky.datasource.driver-class-name}
@@ -37,3 +43,10 @@ sky:
     admin-ttl: 7200000
     # 设置前端传递过来的令牌名称
     admin-token-name: token
+  alioss:
+    endpoint: oss-cn-hangzhou.aliyuncs.com
+    access-key-id: LTAI5t6CDShGvToDQNw8k8Ai  # 注意这里是你的真实值
+    access-key-secret: 5NW1V7qETsm9nCP2Wm2o2yx1uKmkib # 注意这里是你的真实值
+    bucket-name: dilicious-sky-out
+
+
