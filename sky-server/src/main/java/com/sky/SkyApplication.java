@@ -7,6 +7,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @EnableConfigurationProperties(AliOssProperties.class)
 
 @Slf4j
+@EnableCaching
+//开启我们的缓存注解
 public class SkyApplication {
     public static void main(String[] args) {
         SpringApplication.run(SkyApplication.class, args);

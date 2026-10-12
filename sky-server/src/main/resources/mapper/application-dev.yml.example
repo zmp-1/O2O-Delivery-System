@@ -1,0 +1,17 @@
+sky:
+  datasource:
+    driver-class-name: your_name
+    host: localhost
+    port: 1111
+    database: sky_take_out
+    username: root
+    password: your_redis_password  redis:
+    host: localhost
+    port: 6379
+    database: 0
+
+
+
+  wechat:
+    appid: yourappid
+    secret: your_password
