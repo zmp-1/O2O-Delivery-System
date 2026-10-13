@@ -107,5 +107,19 @@ Long userId=1L;
         return list;
     }
 
+    /**
+     * 清空购物车
+     */
+
+
+    public void cleanShoppingCart() {
+        //获取当前微信用户的id
+        //Long userId=Basecontext.getCurrentId();
+        Long userId=1L;
+        shoppingCartMapper.deleteByUserId(1L);
+
+
+    }
+
 
 }
