@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -88,9 +89,23 @@ private ShoppingCartMapper shoppingCartMapper;
 
         }
 
+    /**
+     * 查看购物车
+     * @return
+     */
+    public List<ShoppingCart> showShoppingCart() {
+
+        //Long userId = BaseContext.getCurrentId();//获取当前微信用户的id
+
+Long userId=1L;
+       ShoppingCart shoppingCart= ShoppingCart.builder()
+                       .userId(1L)
+                       .build();
 
 
-
-
-
+       List<ShoppingCart> list= shoppingCartMapper.list(shoppingCart);
+        return list;
     }
+
+
+}
