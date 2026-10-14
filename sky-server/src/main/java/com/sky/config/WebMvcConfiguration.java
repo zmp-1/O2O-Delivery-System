@@ -46,7 +46,9 @@ private JwtTokenUserInterceptor jwtTokenUserInterceptor;
                 .excludePathPatterns("/user/user/login")
                 .excludePathPatterns("/user/shop/status")
                 .excludePathPatterns("/user/shoppingCart/**")
-                .excludePathPatterns("/user/addressBook/**");
+                .excludePathPatterns("/user/addressBook/**")
+                .excludePathPatterns("/user/order/**")
+                .excludePathPatterns("/user/setmeal/**");
 
 
 
