@@ -5,6 +5,8 @@ import com.sky.dto.OrdersSubmitDTO;
 import com.sky.result.PageResult;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
+import org.apache.ibatis.annotations.Param;
 
 public interface OrderService {
 
@@ -38,5 +40,17 @@ public interface OrderService {
      */
     PageResult pageQuery4User(int page, int pageSize, Integer status);
 
+     /**
+     * 查询订单详情
+     * @param id
+     * @return
+     */
+    OrderVO details(Long id);
 
+    /**
+     * 取消订单
+     */
+
+
+    void userCancelById(Long id) throws Exception;
 }

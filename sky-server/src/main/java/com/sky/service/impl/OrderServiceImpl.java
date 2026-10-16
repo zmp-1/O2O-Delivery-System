@@ -212,8 +212,75 @@ shoppingCartMapper.deleteByUserId(userId);
         return new PageResult(page.getTotal(), list);
     }
 
+    /**
+     *  查询订单详情
+     * @param
+     */
+
+    /**
+     * 查询订单详情
+     *
+     * @param id
+     * @return
+     */
+    public OrderVO details(Long id) {
+        // 根据id查询订单
+        Orders orders = orderMapper.getById(id);
+
+        // 查询该订单对应的菜品/套餐明细
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(orders.getId());
+
+        // 将该订单及其详情封装到OrderVO并返回
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(orders, orderVO);
+        orderVO.setOrderDetailList(orderDetailList);
+
+        return orderVO;
+    }
 
 
+    /**
+     *  用户取消订单
+     */
+   public void userCancelById(Long id) throws Exception {
+       //根据id查询订单
+     Orders ordersDB=  orderMapper.getById(id);
+
+       //校验订单是否存在
+       if(ordersDB==null){
+           throw new
+                   OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+       }
+       //订单状态 1待付款 2 待接单 3 已接单 4 派送中  5 已完成  6 已取消
+if(ordersDB.getStatus()>2){
+    throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+}
+
+Orders orders=new Orders();
+orders.setId(ordersDB.getId());
+//待支付和待接单状态下，用户可以直接取消订单，需要进行退款
+if(ordersDB.getStatus().equals(Orders.TO_BE_CONFIRMED)){
+    weChatPayUtil.refund(
+          ordersDB.getNumber(),//商家订单号
+            ordersDB.getNumber(),//商家退款单号
+            new BigDecimal(0.01),//退款金额单位
+
+            new BigDecimal(0.01)  );//原订单金额
+    //修改支付状态为退款
+          orders.setPayStatus(Orders.REFUND);
+}
+
+
+       //更新状态，取消原因，取消时间
+
+orders.setStatus(Orders.CANCELLED);
+orders.setCancelReason("用户取消");
+orders.setCancelTime(LocalDateTime.now());
+orderMapper.update(orders);
+
+
+
+   }
 
 
 }
