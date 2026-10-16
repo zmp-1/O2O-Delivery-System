@@ -30,25 +30,27 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-@Autowired
-private OrderMapper orderMapper;
-@Autowired
-private OrderDetailMapper orderDetailMapper;
-@Autowired
-private AddressBookMapper addressBookMapper;
-@Autowired
-private ShoppingCartMapper shoppingCartMapper;
-@Autowired
-private WeChatPayUtil   weChatPayUtil;
-@Autowired
-private UserMapper userMapper;
+    @Autowired
+    private OrderMapper orderMapper;
+    @Autowired
+    private OrderDetailMapper orderDetailMapper;
+    @Autowired
+    private AddressBookMapper addressBookMapper;
+    @Autowired
+    private ShoppingCartMapper shoppingCartMapper;
+    @Autowired
+    private WeChatPayUtil weChatPayUtil;
+    @Autowired
+    private UserMapper userMapper;
 
 
     /**
      * 用户下单
+     *
      * @param orderSubmitDTO
      * @return
      */
@@ -56,24 +58,24 @@ private UserMapper userMapper;
     public OrderSubmitVO submitOrder(OrdersSubmitDTO orderSubmitDTO) {
         //1.处理各种业务异常，地址簿为空，购物车数据为空，
         AddressBook addressBook = addressBookMapper.getById(orderSubmitDTO.getAddressBookId());
-        if(addressBook==null){
+        if (addressBook == null) {
             throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
 
         }
         ShoppingCart shoppingCart = new ShoppingCart();
         //查询当前用户的购物车的数据是否为0
-     //   Long userId = BaseContext.getCurrentId();
-        Long userId=1L;
+        //   Long userId = BaseContext.getCurrentId();
+        Long userId = 1L;
         shoppingCart.setUserId(userId);
         List<ShoppingCart> shoppingCartList = shoppingCartMapper.list(shoppingCart);
-        if(shoppingCartList==null|| shoppingCartList.size()==0){
+        if (shoppingCartList == null || shoppingCartList.size() == 0) {
             throw new ShoppingCartBusinessException(MessageConstant.SHOPPING_CART_IS_NULL);
         }
 
 
         //2.向订单表插入一条订单数据
         Orders orders = new Orders();
-        BeanUtils.copyProperties(orderSubmitDTO,orders);
+        BeanUtils.copyProperties(orderSubmitDTO, orders);
         orders.setOrderTime(LocalDateTime.now());
         orders.setPayStatus(Orders.UN_PAID);
         orders.setStatus(Orders.PENDING_PAYMENT);
@@ -83,34 +85,28 @@ private UserMapper userMapper;
         orders.setUserId(userId);
         orderMapper.insert(orders);
 
-        List<OrderDetail> orderDetailList=new ArrayList<>();
+        List<OrderDetail> orderDetailList = new ArrayList<>();
 
         //3.向订单明细表插入多条数据
-        for ( ShoppingCart cart: shoppingCartList) {
-            OrderDetail orderDetail=new OrderDetail();//订单明细
-            BeanUtils.copyProperties(cart,orderDetail);
+        for (ShoppingCart cart : shoppingCartList) {
+            OrderDetail orderDetail = new OrderDetail();//订单明细
+            BeanUtils.copyProperties(cart, orderDetail);
             orderDetail.setOrderId(orders.getId());//设置当前订单明细关联的订单id
             orderDetailList.add(orderDetail);
 
 
-
-
         }
 
-orderDetailMapper.insertBatch(orderDetailList);
+        orderDetailMapper.insertBatch(orderDetailList);
 
         //4.清空当前用户的购物车数据
-shoppingCartMapper.deleteByUserId(userId);
-
+        shoppingCartMapper.deleteByUserId(userId);
 
 
         //封装VO返回结构
 
 
-
-
-
-      OrderSubmitVO orderSubmitVO=  OrderSubmitVO.builder()
+        OrderSubmitVO orderSubmitVO = OrderSubmitVO.builder()
                 .id(orders.getId())
                 .orderTime(orders.getOrderTime())
                 .orderNumber(orders.getNumber())
@@ -118,8 +114,6 @@ shoppingCartMapper.deleteByUserId(userId);
                 .build();
         return orderSubmitVO;
     }
-
-
 
 
     /**
@@ -240,50 +234,110 @@ shoppingCartMapper.deleteByUserId(userId);
 
 
     /**
-     *  用户取消订单
+     * 用户取消订单
      */
-   public void userCancelById(Long id) throws Exception {
-       //根据id查询订单
-     Orders ordersDB=  orderMapper.getById(id);
+    public void userCancelById(Long id) throws Exception {
+        //根据id查询订单
+        Orders ordersDB = orderMapper.getById(id);
 
-       //校验订单是否存在
-       if(ordersDB==null){
-           throw new
-                   OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
-       }
-       //订单状态 1待付款 2 待接单 3 已接单 4 派送中  5 已完成  6 已取消
-if(ordersDB.getStatus()>2){
-    throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
-}
+        //校验订单是否存在
+        if (ordersDB == null) {
+            throw new
+                    OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        //订单状态 1待付款 2 待接单 3 已接单 4 派送中  5 已完成  6 已取消
+        if (ordersDB.getStatus() > 2) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
 
-Orders orders=new Orders();
-orders.setId(ordersDB.getId());
+        Orders orders = new Orders();
+        orders.setId(ordersDB.getId());
 //待支付和待接单状态下，用户可以直接取消订单，需要进行退款
-if(ordersDB.getStatus().equals(Orders.TO_BE_CONFIRMED)){
-    weChatPayUtil.refund(
-          ordersDB.getNumber(),//商家订单号
-            ordersDB.getNumber(),//商家退款单号
-            new BigDecimal(0.01),//退款金额单位
+        if (ordersDB.getStatus().equals(Orders.TO_BE_CONFIRMED)) {
+            weChatPayUtil.refund(
+                    ordersDB.getNumber(),//商家订单号
+                    ordersDB.getNumber(),//商家退款单号
+                    new BigDecimal(0.01),//退款金额单位
 
-            new BigDecimal(0.01)  );//原订单金额
-    //修改支付状态为退款
-          orders.setPayStatus(Orders.REFUND);
+                    new BigDecimal(0.01));//原订单金额
+            //修改支付状态为退款
+            orders.setPayStatus(Orders.REFUND);
+        }
+
+
+        //更新状态，取消原因，取消时间
+
+        orders.setStatus(Orders.CANCELLED);
+        orders.setCancelReason("用户取消");
+        orders.setCancelTime(LocalDateTime.now());
+        orderMapper.update(orders);
+    }
+
+    /**
+     * 再来一单
+     *
+     * @param id
+     */
+    public void repetition(Long id) {
+        // 查询当前用户id
+        //Long userId = BaseContext.getCurrentId();
+Long userId=1L;
+        // 根据订单id查询当前订单详情
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
+
+        // 将订单详情对象转换为购物车对象
+        List<ShoppingCart> shoppingCartList = orderDetailList.stream().map(x -> {
+            ShoppingCart shoppingCart = new ShoppingCart();
+
+            // 将原订单详情里面的菜品信息重新复制到购物车对象中
+            BeanUtils.copyProperties(x, shoppingCart, "id");
+            shoppingCart.setUserId(userId);
+            shoppingCart.setCreateTime(LocalDateTime.now());
+
+            return shoppingCart;
+        }).collect(Collectors.toList());
+
+        // 将购物车对象批量添加到数据库
+        shoppingCartMapper.insertBatch(shoppingCartList);
+    }
 }
 
 
-       //更新状态，取消原因，取消时间
-
-orders.setStatus(Orders.CANCELLED);
-orders.setCancelReason("用户取消");
-orders.setCancelTime(LocalDateTime.now());
-orderMapper.update(orders);
 
 
 
-   }
 
 
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

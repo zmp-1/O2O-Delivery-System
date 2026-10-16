@@ -48,7 +48,7 @@ public interface OrderMapper {
      * @param id
      */
 
-    void putorder(Long id);
+
 }
 
 
