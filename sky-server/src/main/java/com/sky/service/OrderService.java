@@ -1,12 +1,16 @@
 package com.sky.service;
 
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.result.PageResult;
+import com.sky.result.Result;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface OrderService {
 
@@ -21,7 +25,7 @@ public interface OrderService {
 
 
     /**
-     * 订单支付
+     * 用户端-订单支付
      */
     OrderPaymentVO payment(OrdersPaymentDTO ordersPaymentDTO) throws Exception;
 
@@ -31,7 +35,7 @@ public interface OrderService {
     void paySuccess(String outTradeNo);
 
     /**
-     * 用户端订单分页查询
+     * 用户端-订单分页查询
      *
      * @param page
      * @param pageSize
@@ -41,14 +45,14 @@ public interface OrderService {
     PageResult pageQuery4User(int page, int pageSize, Integer status);
 
      /**
-     * 查询订单详情
+     * 用户端-查询订单详情
      * @param id
      * @return
      */
     OrderVO details(Long id);
 
     /**
-     * 取消订单
+     * 用户端-取消订单
      */
 
 
@@ -56,8 +60,16 @@ public interface OrderService {
 
     /**
      *
-     * 再来一单
+     * 用户端-再来一单
      * @param id
      */
     void repetition(Long id);
+
+    /**
+     * 管理端-订单搜索
+     * @param
+     */
+
+
+    PageResult conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO);
 }
