@@ -6,6 +6,7 @@ import com.sky.dto.OrdersSubmitDTO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.vo.OrderPaymentVO;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import org.apache.ibatis.annotations.Param;
@@ -72,4 +73,11 @@ public interface OrderService {
 
 
     PageResult conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO);
+
+
+    /**
+     * 管理端-各个状态的订单数量统计
+     * @return
+     */
+    OrderStatisticsVO statistics();
 }
