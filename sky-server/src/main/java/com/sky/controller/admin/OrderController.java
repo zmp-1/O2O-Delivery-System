@@ -2,6 +2,7 @@ package com.sky.controller.admin;
 
 import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
+import com.sky.dto.OrdersRejectionDTO;
 import com.sky.entity.Orders;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
@@ -77,7 +78,7 @@ public class OrderController {
 
     /**
      * 接单
-     * @param orders
+     * @param
      * @return
      */
     @PutMapping("/confirm")
@@ -86,16 +87,28 @@ public class OrderController {
 
 orderService.confirm(ordersConfirmDTO);
 return Result.success();
+    }
+
+/**
+ * 拒单
+ * 业务规则：
+ * 1.上家具但就是将订单的状态修改
+ * 2.只有订单的状态是待接单的时候才能拒单
+ * 3.商家拒单时需要指定拒单原因
+ * 4.上家具但是。如果用户完成支付，需要为用户退款
+ *
+ */
 
 
+        @PutMapping("/rejection")
+        @ApiOperation("拒单")
 
 
+        public Result rejection(@RequestBody OrdersRejectionDTO ordersRejectionDTO) throws Exception {
 
-
-
-
-
-
+            orderService.rejection(ordersRejectionDTO);
+            return Result.success();
+        }
     }
 
 
@@ -107,7 +120,15 @@ return Result.success();
 
 
 
-}
+
+
+
+
+
+
+
+
+
 
 
 
