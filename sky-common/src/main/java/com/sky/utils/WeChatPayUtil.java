@@ -63,6 +63,7 @@ public class WeChatPayUtil {
                     .withMerchant(weChatProperties.getMchid(), weChatProperties.getMchSerialNo(), merchantPrivateKey)
                     .withWechatPay(wechatPayCertificates);
 
+
             // 通过WechatPayHttpClientBuilder构造的HttpClient，会自动的处理签名和验签
             CloseableHttpClient httpClient = builder.build();
             return httpClient;
