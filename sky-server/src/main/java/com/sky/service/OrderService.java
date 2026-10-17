@@ -112,4 +112,10 @@ public interface OrderService {
 
 
     void compelete(Long id);
+
+    /**
+     * 客户催单
+     * @param id
+     */
+    void reminder(Long id);
 }
