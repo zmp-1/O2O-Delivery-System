@@ -474,6 +474,29 @@ public void rejection(OrdersRejectionDTO ordersRejectionDTO) throws Exception{
         orderMapper.update(orders);
     }
 
+    /**
+     * 派送订单
+     * @param id
+     */
+    public void delivery(Long id) {
+        //根据id查询订单
+        Orders ordersDB=orderMapper.getById(id);
+        //校验订单是否存在，并且订单的状态为3
+        if(ordersDB==null||! ordersDB.getStatus().equals(Orders.CONFIRMED)){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+
+        }
+        Orders  orders=new Orders();
+        orders.setId(id);
+        orders.setStatus(Orders.DELIVERY_IN_PROGRESS);
+        orderMapper.update(orders);
+
+    }
+
+
+    //修改订单状态为在派送中
+    //orders.setstatuse;
+    //orderMpaeer.update(orders);
 
     }
 
