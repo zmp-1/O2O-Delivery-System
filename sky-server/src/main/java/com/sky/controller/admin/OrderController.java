@@ -79,6 +79,7 @@ public class OrderController {
 
     /**
      * 接单
+     *
      * @param
      * @return
      */
@@ -86,33 +87,34 @@ public class OrderController {
     @ApiOperation("接单")
     public Result confirm(@RequestBody OrdersConfirmDTO ordersConfirmDTO) {
 
-orderService.confirm(ordersConfirmDTO);
-return Result.success();
+        orderService.confirm(ordersConfirmDTO);
+        return Result.success();
     }
 
-/**
- * 拒单
- * 业务规则：
- * 1.上家具但就是将订单的状态修改
- * 2.只有订单的状态是待接单的时候才能拒单
- * 3.商家拒单时需要指定拒单原因
- * 4.上家具但是。如果用户完成支付，需要为用户退款
- *
- */
+    /**
+     * 拒单
+     * 业务规则：
+     * 1.上家具但就是将订单的状态修改
+     * 2.只有订单的状态是待接单的时候才能拒单
+     * 3.商家拒单时需要指定拒单原因
+     * 4.上家具但是。如果用户完成支付，需要为用户退款
+     *
+     */
 
 
-        @PutMapping("/rejection")
-        @ApiOperation("拒单")
+    @PutMapping("/rejection")
+    @ApiOperation("拒单")
 
 
-        public Result rejection(@RequestBody OrdersRejectionDTO ordersRejectionDTO) throws Exception {
+    public Result rejection(@RequestBody OrdersRejectionDTO ordersRejectionDTO) throws Exception {
 
-            orderService.rejection(ordersRejectionDTO);
-            return Result.success();
-        }
+        orderService.rejection(ordersRejectionDTO);
+        return Result.success();
+    }
 
     /**
      * 取消订单
+     *
      * @param
      * @return
      * @throws Exception
@@ -127,39 +129,28 @@ return Result.success();
         return Result.success();
     }
 
-/**
- * 派送订单
- */
-@PutMapping("/delivery/{id}")
-@ApiOperation("派送订单")
-public Result delivery(@PathVariable("id") Long  id) {
+    /**
+     * 派送订单
+     */
+    @PutMapping("/delivery/{id}")
+    @ApiOperation("派送订单")
+    public Result delivery(@PathVariable("id") Long id) {
 
-
-orderService.delivery(id);
-
-
-
-
-
-
-    return Result.success();
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
+        orderService.delivery(id);
+        return Result.success();
     }
 
+    /**
+     * 完成订单
+     */
+    @PutMapping("/complete/{id}")
+    @ApiOperation("完成订单")
+    public Result complete(@PathVariable("id") Long id) {
+
+        orderService.compelete(id);
+        return Result.success();
+    }
+}
 
 
 
