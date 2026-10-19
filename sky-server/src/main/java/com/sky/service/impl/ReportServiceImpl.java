@@ -219,6 +219,8 @@ public class ReportServiceImpl implements ReportService {
         LocalDateTime beginTime = LocalDateTime.of(begin, LocalTime.MIN);
         LocalDateTime endTime = LocalDateTime.of(end, LocalTime.MAX);
 
+
+
         Map map = new HashMap<>();
         map.put("begin", beginTime);
         map.put("end", endTime);
@@ -242,25 +244,6 @@ public class ReportServiceImpl implements ReportService {
             map.put("end",end);
             map.put("status",status);
         return orderMapper.countByMap(map);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     }
